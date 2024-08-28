@@ -35,6 +35,14 @@ Main (unreleased)
 
 - Add extra validation in `beyla.ebpf` to avoid panics when network feature is enabled. (@marctc)
 
+- Upgrading to Prometheus v2.54.1. (@ptodev)
+  - `discovery.docker` has a new `match_first_network` attribute for matching the first network 
+    if the container has multiple networks defined, thus avoiding collecting duplicate targets.
+  - `discovery.ec2`, `discovery.kubernetes`, `discovery.openstack`, and `discovery.ovhcloud`
+    add extra `__meta_` labels.
+  - `prometheus.remote_write` supports Azure OAuth and Azure SDK authentication.
+  - `discovery.linode` has a new `region` attribute, as well as extra `__meta_` labels.
+
 ### Bugfixes
 
 - Fix a bug where custom components don't always get updated when the config is modified in an imported directory. (@ante012)
