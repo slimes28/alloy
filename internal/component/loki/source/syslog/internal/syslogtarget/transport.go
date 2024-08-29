@@ -21,7 +21,7 @@ import (
 	"github.com/grafana/dskit/backoff"
 	"github.com/grafana/loki/v3/clients/pkg/promtail/scrapeconfig"
 	"github.com/grafana/loki/v3/clients/pkg/promtail/targets/syslog/syslogparser"
-	"github.com/influxdata/go-syslog/v3"
+	"github.com/leodido/go-syslog/v4"
 	"github.com/mwitkow/go-conntrack"
 	"github.com/prometheus/common/config"
 	"github.com/prometheus/prometheus/model/labels"
@@ -321,7 +321,7 @@ func (t *TCPTransport) handleConnection(cn net.Conn) {
 
 	lbs := t.connectionLabels(ipFromConn(c).String())
 
-	err := syslogparser.ParseStream(c, func(result *syslog.Result) {
+	err := syslogparser.ParseStream(t.config.IsRFC3164Message(), c, func(result *syslog.Result) {
 		if err := result.Error; err != nil {
 			t.handleMessageError(err)
 			return
@@ -445,7 +445,7 @@ func (t *UDPTransport) handleRcv(c *ConnPipe) {
 
 		r := bytes.NewReader(datagram[:n])
 
-		err = syslogparser.ParseStream(r, func(result *syslog.Result) {
+		err = syslogparser.ParseStream(t.config.IsRFC3164Message(), r, func(result *syslog.Result) {
 			if err := result.Error; err != nil {
 				t.handleMessageError(err)
 			} else {

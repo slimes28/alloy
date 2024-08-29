@@ -43,6 +43,8 @@ Main (unreleased)
   - `prometheus.remote_write` supports Azure OAuth and Azure SDK authentication.
   - `discovery.linode` has a new `region` attribute, as well as extra `__meta_` labels.
 
+- `loki.source.syslog` now supports RFC3164. (@catap)
+
 ### Bugfixes
 
 - Fix a bug where custom components don't always get updated when the config is modified in an imported directory. (@ante012)

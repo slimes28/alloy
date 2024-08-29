@@ -21,14 +21,23 @@ type ListenerConfig struct {
 	UseIncomingTimestamp bool              `alloy:"use_incoming_timestamp,attr,optional"`
 	UseRFC5424Message    bool              `alloy:"use_rfc5424_message,attr,optional"`
 	MaxMessageLength     int               `alloy:"max_message_length,attr,optional"`
+	SyslogFormat         string            `alloy:"syslog_format,attr,optional"`
 	TLSConfig            config.TLSConfig  `alloy:"tls_config,block,optional"`
 }
+
+const (
+	// A modern Syslog RFC
+	SyslogRFC5424 = "rfc5424"
+	// A legacy Syslog RFC also known as BSD-syslog
+	SyslogRFC3164 = "rfc3164"
+)
 
 // DefaultListenerConfig provides the default arguments for a syslog listener.
 var DefaultListenerConfig = ListenerConfig{
 	ListenProtocol:   st.DefaultProtocol,
 	IdleTimeout:      st.DefaultIdleTimeout,
 	MaxMessageLength: st.DefaultMaxMessageLength,
+	SyslogFormat:     SyslogRFC5424,
 }
 
 // SetToDefault implements syntax.Defaulter.
@@ -40,6 +49,10 @@ func (sc *ListenerConfig) SetToDefault() {
 func (sc *ListenerConfig) Validate() error {
 	if sc.ListenProtocol != "tcp" && sc.ListenProtocol != "udp" {
 		return fmt.Errorf("syslog listener protocol should be either 'tcp' or 'udp', got %s", sc.ListenProtocol)
+	}
+
+	if sc.SyslogFormat != SyslogRFC5424 && sc.SyslogFormat != SyslogRFC3164 {
+		return fmt.Errorf("syslog format should be either '%s' or '%s', got %s", SyslogRFC5424, SyslogRFC3164, sc.SyslogFormat)
 	}
 
 	return nil
@@ -62,5 +75,6 @@ func (sc ListenerConfig) Convert() *scrapeconfig.SyslogTargetConfig {
 		UseRFC5424Message:    sc.UseRFC5424Message,
 		MaxMessageLength:     sc.MaxMessageLength,
 		TLSConfig:            *sc.TLSConfig.Convert(),
+		SyslogFormat:         scrapeconfig.SyslogFormat(sc.SyslogFormat),
 	}
 }
