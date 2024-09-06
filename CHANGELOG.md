@@ -108,6 +108,8 @@ v1.4.0-rc.2
   configuration could result in incorrect URLs. The `path` and `key` arguments have been separated to allow for clear and accurate
   specification of Vault secrets. (@PatMis16)
 
+- Fixed a bug in `import.git` which caused a `"non-fast-forward update"` error message. (@ptodev)
+
 ### Other
 
 - Renamed standard library functions. Old names are still valid but are marked deprecated. (@wildum)
