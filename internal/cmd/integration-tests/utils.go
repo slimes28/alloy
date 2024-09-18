@@ -35,7 +35,7 @@ func executeCommand(command string, args []string, taskDescription string) {
 }
 
 func buildAlloy() {
-	executeCommand("make", []string{"-C", "../../..", "alloy"}, "Building Alloy")
+	executeCommand("make", []string{"-C", "../../..", "alloy-image"}, "Building Alloy")
 }
 
 func setupEnvironment() {
@@ -55,16 +55,30 @@ func runSingleTest(testDir string, port int) {
 
 	dirName := filepath.Base(testDir)
 
-	var alloyLogBuffer bytes.Buffer
-	cmd := exec.Command(alloyBinaryPath, "run", "config.alloy", "--server.http.listen-addr", fmt.Sprintf("0.0.0.0:%d", port), "--stability.level", "experimental")
+	absTestDir, err := filepath.Abs(testDir)
+	if err != nil {
+		panic(fmt.Sprintf("Failed to get absolute path of testDir: %v", err))
+	}
+
+	dockerImage := "grafana/alloy:latest"
+	containerName := "alloy-" + dirName
+
+	cmd := exec.Command("docker", "run", "--rm", "-d",
+		"--name", containerName,
+		"--network", "integration-tests_default",
+		"--privileged",
+		"-v", fmt.Sprintf("%s:/test-dir", absTestDir),
+		"-p", fmt.Sprintf("%d:%d", port, port),
+		dockerImage, "run", "test-dir/config.alloy",
+		"--server.http.listen-addr", fmt.Sprintf("0.0.0.0:%d", port),
+		"--stability.level", "experimental")
+
 	cmd.Dir = testDir
-	cmd.Stdout = &alloyLogBuffer
-	cmd.Stderr = &alloyLogBuffer
 
 	if err := cmd.Start(); err != nil {
 		logChan <- TestLog{
 			TestDir:  dirName,
-			AlloyLog: fmt.Sprintf("Failed to start Alloy: %v", err),
+			AlloyLog: fmt.Sprintf("Failed to start Docker container: %v", err),
 		}
 		return
 	}
@@ -73,24 +87,21 @@ func runSingleTest(testDir string, port int) {
 	testCmd.Dir = testDir
 	testOutput, errTest := testCmd.CombinedOutput()
 
-	err = cmd.Process.Kill()
-	if err != nil {
-		panic(err)
-	}
+	logCmd := exec.Command("docker", "logs", containerName)
+	dockerLogs, errLogs := logCmd.CombinedOutput()
+	alloyLog := string(dockerLogs)
 
-	alloyLog := alloyLogBuffer.String()
+	time.Sleep(5 * time.Second)
 
-	if errTest != nil {
+	// skip error
+	_ = exec.Command("docker", "stop", containerName).Run()
+
+	if errTest != nil && errLogs != nil {
 		logChan <- TestLog{
 			TestDir:    dirName,
 			AlloyLog:   alloyLog,
 			TestOutput: string(testOutput),
 		}
-	}
-
-	err = os.RemoveAll(filepath.Join(testDir, "data-alloy"))
-	if err != nil {
-		panic(err)
 	}
 }
 

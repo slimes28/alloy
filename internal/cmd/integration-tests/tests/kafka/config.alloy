@@ -1,5 +1,5 @@
 prometheus.exporter.kafka "kafka_metrics" {
-  kafka_uris = ["127.0.0.1:9094"]
+  kafka_uris = ["kafka:9092"]
 }
 
 prometheus.scrape "kafka_metrics" {
