@@ -11,6 +11,11 @@ services:
     ports:
       - "9009:9009"
 
+  goblog:
+    image: mariomac/goblog:dev
+    ports:
+      - "8443:8443"
+
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     environment:

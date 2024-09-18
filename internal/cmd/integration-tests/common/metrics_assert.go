@@ -91,6 +91,7 @@ func AssertMetricsAvailable(t *testing.T, metrics []string, histogramMetrics []s
 func checkMissingMetrics(expectedMetrics []string, actualMetrics []Metric) []string {
 	metricSet := make(map[string]struct{}, len(actualMetrics))
 	for _, metric := range actualMetrics {
+		fmt.Println("Actual metric: ", metric.Name)
 		metricSet[metric.Name] = struct{}{}
 	}
 
