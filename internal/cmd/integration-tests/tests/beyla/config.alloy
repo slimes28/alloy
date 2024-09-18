@@ -1,5 +1,5 @@
 beyla.ebpf "default" {
-  open_port = "8442"
+  open_port = "8443"
   debug = true
 }
 
