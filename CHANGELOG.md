@@ -10,10 +10,17 @@ internal API changes are not present.
 Main (unreleased)
 -----------------
 
+### Breaking changes
+
+- `import.git`: The default value for `revision` has changed from `HEAD` to `main`. (@ptodev)
+  It is no longer allowed to set `revision` to `"HEAD"`, `"FETCH_HEAD"`, `"ORIG_HEAD"`, `"MERGE_HEAD"`, or `"CHERRY_PICK_HEAD"`.
+
 ### Bugfixes
 
 - Update yet-another-cloudwatch-exporter from v0.60.0 vo v0.61.0: (@morremeyer)
   - Fixes a bug where cloudwatch S3 metrics are reported as `0`
+
+- Fixed a bug in `import.git` which caused a `"non-fast-forward update"` error message. (@ptodev)
 
 
 ### Other changes
@@ -107,8 +114,6 @@ v1.4.0-rc.2
 - Fixed an issue (see https://github.com/grafana/alloy/issues/1599) where specifying both path and key in the remote.vault `path`
   configuration could result in incorrect URLs. The `path` and `key` arguments have been separated to allow for clear and accurate
   specification of Vault secrets. (@PatMis16)
-
-- Fixed a bug in `import.git` which caused a `"non-fast-forward update"` error message. (@ptodev)
 
 ### Other
 
