@@ -14,6 +14,9 @@ Main (unreleased)
 
 - Add the function `path_join` to the stdlib. (@wildum)
 
+- Add support for relative paths to `import.file`. This new functionality allows users to use `import.file` blocks in modules
+  imported via `import.git` and other `import.file`. (@wildum)
+
 ### Bugfixes
 
 - Update yet-another-cloudwatch-exporter from v0.60.0 vo v0.61.0: (@morremeyer)
