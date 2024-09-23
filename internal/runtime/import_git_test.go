@@ -55,7 +55,7 @@ testImport.add "cc" {
 
 	defer verifyNoGoroutineLeaks(t)
 	ctrl, f := setup(t, main)
-	err = ctrl.LoadSource(f, nil)
+	err = ctrl.LoadSource(f, nil, "")
 	require.NoError(t, err)
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -121,7 +121,7 @@ testImport.add "cc" {
 
 	defer verifyNoGoroutineLeaks(t)
 	ctrl, f := setup(t, main)
-	err = ctrl.LoadSource(f, nil)
+	err = ctrl.LoadSource(f, nil, "")
 	require.NoError(t, err)
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -202,7 +202,7 @@ testImport.add "cc" {
 
 	defer verifyNoGoroutineLeaks(t)
 	ctrl, f := setup(t, main)
-	err = ctrl.LoadSource(f, nil)
+	err = ctrl.LoadSource(f, nil, "")
 	require.NoError(t, err)
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -265,7 +265,7 @@ testImport.add "cc" {
 	defer verifyNoGoroutineLeaks(t)
 
 	ctrl, f := setup(t, main)
-	err = ctrl.LoadSource(f, nil)
+	err = ctrl.LoadSource(f, nil, "")
 	require.NoError(t, err)
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -349,7 +349,7 @@ testImport.add "cc" {
 
 	defer verifyNoGoroutineLeaks(t)
 	ctrl, f := setup(t, main)
-	err = ctrl.LoadSource(f, nil)
+	err = ctrl.LoadSource(f, nil, "")
 	expectedErr := vcs.InvalidRevisionError{
 		Revision: "nonexistent",
 	}
